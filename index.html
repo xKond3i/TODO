@@ -20,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- stylesheets -->
-    <link rel="stylesheet" href="src/css/style.css">
+    <link rel="stylesheet" href="src/css/style.min.css">
 
     <!-- scripts -->
     <script src="src/js/app.js" defer></script>
@@ -30,7 +30,42 @@
 </head>
 <body>
     
-    
+    <section class="__todo_container">
+        <div class="__todo_header __todo_row">
+            <h1>TODO List</h1>
+        </div>
+
+        <ul class="__todo_list">
+            <li class="__todo_entry __todo_row">
+                <input type="checkbox" class="__todo_checkbox" id="__todo_checkbox">
+                <label class="__todo_content">Lorem ipsum dolor sit amet.</label>
+                <button class="__todo_btn __todo_del"><img src="src/assets/icons/trash.svg" alt="trash"></button>
+            </li>
+            <li class="__todo_entry __todo_row">
+                <input type="checkbox" class="__todo_checkbox" id="__todo_checkbox">
+                <label class="__todo_content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius at fugiat aliquid voluptatem id repudiandae provident fuga cumque, tenetur suscipit, reiciendis quibusdam perspiciatis, consectetur in.</label>
+                <button class="__todo_btn __todo_del"><img src="src/assets/icons/trash.svg" alt="trash"></button>
+            </li>
+            <li class="__todo_entry __todo_row">
+                <input type="checkbox" class="__todo_checkbox" id="__todo_checkbox">
+                <label class="__todo_content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia, quia.</label>
+                <button class="__todo_btn __todo_del"><img src="src/assets/icons/trash.svg" alt="trash"></button>
+            </li>
+        </ul>
+
+        <div class="__todo_new-entry __todo_row">
+            <button class="__todo_btn __todo_add"><img src="src/assets/icons/plus.svg" alt="plus"></button>
+            <input type="text" class="__todo_add_content">
+        </div>
+    </section>
+
+    <template id="__todo_template">
+        <li class="__todo_entry __todo_row">
+            <input type="checkbox" class="__todo_checkbox" id="__todo_checkbox">
+            <label class="__todo_content"></label>
+            <button class="__todo_btn __todo_del"><img src="src/assets/icons/trash.svg" alt="trash"></button>
+        </li>
+    </template>
 
 </body>
 </html>
