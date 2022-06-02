@@ -9,18 +9,26 @@
 :root {
   --color-primary: #2e3641;
   --color-disabled: #9eb2c0;
-  --color-stripes: #f3e6e2;
+  --color-stripe: #dc9581;
   --color-white: #fff;
   --page-bg: #e9f0f4;
+  --success: #a8bd44;
+  --failure: #cd1010;
   --todo-bg: var(--color-white);
   --todo-border: 1px solid var(--color-disabled);
   --todo-header-bg: var(--color-primary);
   --todo-header-c: var(--color-white);
   --todo-row-bg: var(--color-white);
   --todo-row-c: var(--color-primary);
+  --stripe-border: 1px solid var(--color-stripe);
   --gap-sm: .5rem;
   --gap-md: 1rem;
   --gap-lg: 3rem;
+  --todo-stripe-gap: .5rem;
+  --todo-row-gap: 1rem;
+  --todo-btn-size: 1rem;
+  --todo-skip-stripe: calc(var(--todo-btn-size) + var(--todo-stripe-gap) + var(--todo-row-gap) * 3);
+  --quick: .1s;
 }
 
 body {
@@ -29,7 +37,7 @@ body {
   width: 100%;
   min-height: 100vh;
   height: auto;
-  font-size: 1rem;
+  font-size: var(--global-fs);
   font-family: "Lato", sans-serif;
   background-color: var(--page-bg);
   display: flex;
@@ -41,4 +49,108 @@ body {
   width: auto;
   min-width: 256px;
   max-width: 100%;
+  background-color: var(--todo-bg);
+  border: var(--todo-border);
+}
+.__todo_row {
+  position: relative;
+}
+.__todo_row::before {
+  content: "";
+  position: absolute;
+  width: var(--todo-stripe-gap);
+  height: 100%;
+  left: calc(var(--todo-btn-size) + var(--todo-row-gap) * 2);
+  top: 0;
+  border-left: var(--stripe-border);
+  border-right: var(--stripe-border);
+}
+.__todo_header {
+  padding: var(--todo-row-gap);
+  padding-left: var(--todo-skip-stripe);
+  background-color: var(--todo-header-bg);
+  color: var(--todo-header-c);
+  -webkit-print-color-adjust: exact;
+}
+.__todo_entry {
+  border-bottom: var(--todo-border);
+}
+.__todo_entry, .__todo_new-entry {
+  display: flex;
+  padding: var(--todo-row-gap);
+  gap: var(--todo-row-gap);
+}
+.__todo_entry > .__todo_content, .__todo_new-entry > .__todo_content {
+  margin-left: calc(var(--todo-row-gap) + var(--todo-stripe-gap));
+  width: 100%;
+}
+.__todo_entry > .__custom_checkbox, .__todo_entry > .__todo_icon_btn, .__todo_new-entry > .__custom_checkbox, .__todo_new-entry > .__todo_icon_btn {
+  width: var(--todo-btn-size);
+  height: var(--todo-btn-size);
+  flex-shrink: 0;
+}
+.__todo_entry > .__todo_add_content, .__todo_new-entry > .__todo_add_content {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  outline: none;
+  flex: 1;
+}
+.__todo_entry.__todo_entry_done > .__todo_content, .__todo_new-entry.__todo_entry_done > .__todo_content {
+  color: var(--color-disabled);
+  text-decoration: line-through;
+}
+.__todo_entry.__todo_entry_done > .__todo_del, .__todo_new-entry.__todo_entry_done > .__todo_del {
+  color: var(--color-disabled);
+}
+.__todo_icon_btn {
+  border: none;
+  color: var(--color-primary);
+  background: transparent;
+  cursor: pointer;
+}
+.__todo_icon_btn > svg {
+  transform: scale(1.25);
+  transition: transform var(--quick) ease-in-out;
+}
+.__todo_icon_btn:hover > svg {
+  transform: scale(1.5);
+}
+.__todo_list {
+  list-style: none;
+}
+
+.__custom_checkbox {
+  position: relative;
+}
+.__custom_checkbox:hover::before {
+  transform: scale(1.25);
+}
+.__custom_checkbox::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border: var(--todo-border);
+  border-radius: 0.1em;
+  transition: transform var(--quick) ease-in-out;
+}
+.__custom_checkbox > input[type=checkbox] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  pointer-events: all;
+}
+.__custom_checkbox > input[type=checkbox]:checked + .__custom_checkbox_check {
+  visibility: visible;
+}
+.__custom_checkbox_check {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  color: var(--success);
+  transform: scale(1.25);
 }
