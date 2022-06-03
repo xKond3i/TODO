@@ -19,6 +19,9 @@
     <!-- fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
 
+    <!-- icon -->
+    <link rel="shortcut icon" href="src/assets/favicon.svg" type="image/x-icon">
+
     <!-- stylesheets -->
     <link rel="stylesheet" href="src/css/style.min.css">
 
@@ -30,56 +33,34 @@
 </head>
 <body>
     
-    <section class="__todo_container">
-        <header class="__todo_header __todo_row">
-            <h1 class="__todo_content">TODO List</h1>
+    <section class="__todo_container" data-todo-container>
+        <header class="__todo_header __todo_row" data-todo-header>
+            <h1 class="__todo_content" data-todo-content>TODO List</h1>
         </header>
 
-        <ul class="__todo_list">
+        <button class="__todo_icon_btn __todo_del __todo_del_all" data-todo-delete-all-btn>Delete all todos <svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
+
+        <ul class="__todo_list" data-todo-list>
+            <li class="__todo_entry __todo_row __todo_none_left" data-todo-info hidden>
+                <label class="__todo_content" data-todo-content><b>No more todos left!</b></label>
+            </li>
             <!-- todos belong here -->
-            <li class="__todo_entry __todo_row" hidden>
-                <label class="__todo_content"><b>No more todos left!</b></label>
-            </li>
-            <li class="__todo_entry __todo_row __todo_entry_done">
-                <div class="__custom_checkbox __todo_checkbox">
-                    <input type="checkbox" checked>
-                    <svg class="__custom_checkbox_check" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
-                </div>
-                <label class="__todo_content">Lorem ipsum dolor sit amet.</label>
-                <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
-            </li>
-            <li class="__todo_entry __todo_row">
-                <div class="__custom_checkbox __todo_checkbox">
-                    <input type="checkbox">
-                    <svg class="__custom_checkbox_check" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
-                </div>
-                <label class="__todo_content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius at fugiat aliquid voluptatem id repudiandae provident fuga cumque, tenetur suscipit, reiciendis quibusdam perspiciatis, consectetur in.</label>
-                <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
-            </li>
-            <li class="__todo_entry __todo_row">
-                <div class="__custom_checkbox __todo_checkbox">
-                    <input type="checkbox">
-                    <svg class="__custom_checkbox_check" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
-                </div>
-                <label class="__todo_content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia, quia.</label>
-                <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
-            </li>
         </ul>
 
         <div class="__todo_new-entry __todo_row">
-            <button class="__todo_icon_btn __todo_add"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/plus.svg#plus">plus</use></svg></button>
-            <input type="text" class="__todo_add_content __todo_content" maxlength="128">
+            <button class="__todo_icon_btn __todo_add" data-todo-add-btn><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/plus.svg#plus">plus</use></svg></button>
+            <input type="text" class="__todo_add_content __todo_content" data-todo-add-content maxlength="128">
         </div>
     </section>
 
-    <template id="__todo_template">
-        <li class="__todo_entry __todo_row">
+    <template data-todo-template>
+        <li class="__todo_entry __todo_row" data-todo-entry>
             <div class="__custom_checkbox __todo_checkbox">
-                <input type="checkbox">
+                <input type="checkbox" data-todo-checkbox>
                 <svg class="__custom_checkbox_check" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
             </div>
-            <label class="__todo_content"></label>
-            <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
+            <label class="__todo_content" data-todo-content></label>
+            <button class="__todo_icon_btn __todo_del" data-todo-delete-btn><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
         </li>
     </template>
 

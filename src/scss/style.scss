@@ -22,6 +22,7 @@
     }
 }
 
+// BASIC SETUP - RESET SOME BASIC PROPERTIES
 *,
 *::before,
 *::after {
@@ -30,8 +31,9 @@
     box-sizing: border-box;
 }
 
+// VARIABLES
 :root {
-    // base colors and gradients
+    // Base colors and gradients
     --color-primary: #2e3641;
     --color-disabled: #9eb2c0;
     --color-stripe: #dc9581;
@@ -39,10 +41,10 @@
 
     --page-bg: #e9f0f4;
 
-    --success: #a8bd44;
+    --success: #97ab32;
     --failure: #cd1010;
 
-    // color assignment, borders and shadows
+    // Color assignment, borders and shadows
     --todo-bg: var(--color-white);
     --todo-border: 1px solid var(--color-disabled);
 
@@ -54,7 +56,7 @@
 
     --stripe-border: 1px solid var(--color-stripe);
 
-    // dimensions and font sizes
+    // Dimensions and font sizes
     --gap-sm: .5rem;
     --gap-md: 1rem;
     --gap-lg: 3rem;
@@ -64,10 +66,11 @@
 
     --todo-square-btn-size: 1rem;
 
-    // transition
+    // Transitions
     --quick: .1s;
 }
 
+// BODY
 body {
     margin: 0;
     padding: var(--gap-lg);
@@ -84,6 +87,8 @@ body {
     @include flex-center;
 }
 
+// TODO COMPONENT
+// Every included subelements are described here
 .__todo {
     &_container {
         width: auto;
@@ -121,40 +126,8 @@ body {
 
     &_entry {
         border-bottom: var(--todo-border);
-    }
 
-    &_entry,
-    &_new-entry {
-        .__todo_checkbox { grid-area: margin; }
-        .__todo_add { grid-area: margin; }
-
-        .__todo_del { 
-            grid-area: trash;
-            transition: transform var(--quick) ease-in-out,
-                        color var(--quick) ease-in-out;
-        }
-
-        .__todo_checkbox,
-        .__todo_icon_btn {
-            width: var(--todo-square-btn-size);
-            height: var(--todo-square-btn-size);
-            flex-shrink: 0;
-
-            align-self: start;
-            justify-self: center;
-
-            margin-top: var(--todo-row-gap);
-        }
-    
-        .__todo_add_content {
-            font-family: inherit;
-            font-size: inherit;
-            border: none;
-            outline: none;
-
-            grid-column-end: -1;
-        }
-
+        // Entries marked as `done`
         &.__todo_entry_done {
             .__todo_content {
                 color: var(--color-disabled);
@@ -166,19 +139,63 @@ body {
             }
         }
 
-        .__todo_del:hover {
-            color: var(--failure);
+        // Interactive elements on both margins
+        // Checkbox on the left, Trash on the right
+        .__todo_checkbox {
+            grid-area: margin;
+        }
+
+        .__todo_del { 
+            grid-area: trash;
+            transition: transform var(--quick) ease-in-out,
+                        color var(--quick) ease-in-out;
+
+            &:hover { color: var(--failure); }
         }
     }
 
+    &_new-entry {
+        .__todo_add { 
+            grid-area: margin;
+            transition: transform var(--quick) ease-in-out,
+                        color var(--quick) ease-in-out;
+
+            &:hover { color: var(--success); }
+        }
+        
+        .__todo_add_content {
+            font-family: inherit;
+            font-size: inherit;
+            border: none;
+            outline: none;
+            
+            grid-column-end: -1;
+        }
+
+    }
+    &_entry,
+    &_new-entry {
+        .__todo_checkbox,
+        .__todo_icon_btn {
+            width: var(--todo-square-btn-size);
+            height: var(--todo-square-btn-size);
+            flex-shrink: 0;
+
+            align-self: start;
+            justify-self: center;
+
+            margin-top: var(--todo-row-gap);
+        }
+    }
+    
     &_list {
         list-style: none;
     }
 
     &_icon_btn {
-        // for icons I'd have used
+        // For icons I'd have used
         // Fontawesome / Bootstrap Icons / Google Fonts Icons or other similar tool
-        // it would have been easier to format and maintain
+        // It would have been easier to format and maintain
         border: none;
 
         color: var(--color-primary);
@@ -186,17 +203,37 @@ body {
 
         cursor: pointer;
 
-        & > svg {
+        & svg {
             transform: scale(1.25);
             transition: transform var(--quick) ease-in-out;
         }
 
-        &:hover > svg {
+        &:hover svg {
             transform: scale(1.5);
+        }
+    }
+
+    &_del_all { 
+        position: absolute;
+        top: var(--gap-md);
+        right: var(--gap-md);
+
+        @include flex-center;
+        gap: var(--gap-sm);
+
+        transition: transform var(--quick) ease-in-out,
+                    color var(--quick) ease-in-out;
+
+        &:hover { color: var(--failure); }
+
+        & svg {
+            width: var(--todo-square-btn-size);
+            height: var(--todo-square-btn-size);
         }
     }
 }
 
+// CUSTOM CHECKBOX
 .__custom_checkbox {
     position: relative;
 
@@ -246,6 +283,7 @@ body {
     }
 }
 
+// GLOBAL CLASSES AND UTILITIES
 [hidden] { display: none; }
 
 .failure { color: var(--failure); }
