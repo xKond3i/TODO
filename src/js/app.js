@@ -27,6 +27,8 @@ window.onload = () => {
     if (localStorage.hasOwnProperty('__todos')) loadFromLocalStorage()
     saveToLocalStorage()
 
+    toggleEmptyNotification() // None left notification
+
     // Add todos from data array
     for (let todo of todos) {
         addTodoElement(todo)
@@ -82,6 +84,8 @@ function addTodo(title, done = false) {
 
     // Update localStorage
     saveToLocalStorage()
+
+    toggleEmptyNotification() // None left notification
 }
 
 // Handle new entry input
@@ -115,8 +119,8 @@ function deleteTodo(todo_element) {
     // Update localStorage
     saveToLocalStorage()
 
-    // Increasing paper size on input effect
-    updateAddContentInput()
+    toggleEmptyNotification() // None left notification
+    updateAddContentInput() // Increasing paper size on input effect
 }
 
 // Delete all todos both from array and as an element
@@ -129,6 +133,12 @@ function deleteAllTodos() {
 
 // Handle deletion of all todos throuogh the button
 todo_del_all_btn.addEventListener('click', deleteAllTodos)
+
+// # EMPTY
+function toggleEmptyNotification() {
+    if (todos.length === 0) return todo_none_left.removeAttribute('hidden')
+    return todo_none_left.setAttribute('hidden', true)
+}
 
 
 
