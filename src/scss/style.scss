@@ -12,7 +12,7 @@
         width: var(--todo-stripe-gap);
         height: 100%;
     
-        left: calc(var(--todo-btn-size) + var(--todo-row-gap) * 2);
+        left: calc(var(--todo-square-btn-size) + var(--todo-row-gap) * 2);
         top: 0;
     
         border: {
@@ -62,9 +62,7 @@
     --todo-stripe-gap: .5rem;
     --todo-row-gap: 1rem;
 
-    --todo-btn-size: 1rem;
-
-    --todo-skip-stripe: calc(var(--todo-btn-size) + var(--todo-stripe-gap) + var(--todo-row-gap) * 3);
+    --todo-square-btn-size: 1rem;
 
     // transition
     --quick: .1s;
@@ -98,17 +96,27 @@ body {
 
     &_row {
         position: relative;
+
+        --margin-size: calc(var(--todo-row-gap) * 2 + var(--todo-square-btn-size));
+
+        display: grid;
+        grid-template-columns: [margin] var(--margin-size)
+                               [stripe] var(--todo-stripe-gap)
+                               [content] auto
+                               [trash] var(--margin-size);
+
         @include stripes;
+
+        .__todo_content {
+            grid-area: content;
+            padding: var(--todo-row-gap);
+            width: 100%;
+        }
     }
 
     &_header {
-        padding: var(--todo-row-gap);
-        padding-left: var(--todo-skip-stripe);
-
         background-color: var(--todo-header-bg);
         color: var(--todo-header-c);
-
-        -webkit-print-color-adjust: exact;
     }
 
     &_entry {
@@ -117,46 +125,62 @@ body {
 
     &_entry,
     &_new-entry {
-        display: flex;
+        .__todo_checkbox { grid-area: margin; }
+        .__todo_add { grid-area: margin; }
 
-        padding: var(--todo-row-gap);
-        gap: var(--todo-row-gap);
-
-        & > .__todo_content {
-            margin-left: calc(var(--todo-row-gap) + var(--todo-stripe-gap));
-            width: 100%;
+        .__todo_del { 
+            grid-area: trash;
+            transition: transform var(--quick) ease-in-out,
+                        color var(--quick) ease-in-out;
         }
 
-        & > .__custom_checkbox,
-        & > .__todo_icon_btn {
-            width: var(--todo-btn-size);
-            height: var(--todo-btn-size);
+        .__todo_checkbox,
+        .__todo_icon_btn {
+            width: var(--todo-square-btn-size);
+            height: var(--todo-square-btn-size);
             flex-shrink: 0;
-        }
 
-        & > .__todo_add_content {
+            align-self: start;
+            justify-self: center;
+
+            margin-top: var(--todo-row-gap);
+        }
+    
+        .__todo_add_content {
             font-family: inherit;
             font-size: inherit;
             border: none;
             outline: none;
-            flex: 1;
+
+            grid-column-end: -1;
         }
 
         &.__todo_entry_done {
-            & > .__todo_content {
+            .__todo_content {
                 color: var(--color-disabled);
                 text-decoration: line-through;
             }
 
-            & > .__todo_del {
+            .__todo_del {
                 color: var(--color-disabled);
             }
         }
+
+        .__todo_del:hover {
+            color: var(--failure);
+        }
+    }
+
+    &_list {
+        list-style: none;
     }
 
     &_icon_btn {
-        // for icons I'd have used APIs like fontawesome, bootstrap icons, google fonts icons, it would have been easier to format and maintain
+        // for icons I'd have used
+        // Fontawesome / Bootstrap Icons / Google Fonts Icons or other similar tool
+        // it would have been easier to format and maintain
         border: none;
+
         color: var(--color-primary);
         background: transparent;
 
@@ -171,17 +195,14 @@ body {
             transform: scale(1.5);
         }
     }
-
-    &_list {
-        list-style: none;
-    }
 }
 
 .__custom_checkbox {
     position: relative;
 
-    &:hover::before {
-        transform: scale(1.25);
+    &:hover {
+        &::before { transform: scale(1.25); }
+        & .__custom_checkbox_check { transform: scale(1.5); }
     }
     
     &::before {
@@ -198,7 +219,7 @@ body {
         transition: transform var(--quick) ease-in-out;
     }
 
-    & > input[type=checkbox] {
+    & input[type=checkbox] {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -216,7 +237,16 @@ body {
         position: absolute;
         visibility: hidden;
         pointer-events: none;
+
         color: var(--success);
+
         transform: scale(1.25);
+
+        transition: transform var(--quick) ease-in-out;
     }
 }
+
+[hidden] { display: none; }
+
+.failure { color: var(--failure); }
+.success { color: var(--success); }

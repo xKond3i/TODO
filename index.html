@@ -32,38 +32,42 @@
     
     <section class="__todo_container">
         <header class="__todo_header __todo_row">
-            <h1>TODO List</h1>
+            <h1 class="__todo_content">TODO List</h1>
         </header>
 
         <ul class="__todo_list">
+            <!-- todos belong here -->
+            <li class="__todo_entry __todo_row" hidden>
+                <label class="__todo_content"><b>No more todos left!</b></label>
+            </li>
             <li class="__todo_entry __todo_row __todo_entry_done">
                 <div class="__custom_checkbox __todo_checkbox">
                     <input type="checkbox" checked>
-                    <svg class="__custom_checkbox_check" preserveAspectRatio="xMidYMid meet" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
+                    <svg class="__custom_checkbox_check" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
                 </div>
                 <label class="__todo_content">Lorem ipsum dolor sit amet.</label>
-                <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" preserveAspectRatio="xMidYMid meet" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
+                <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
             </li>
             <li class="__todo_entry __todo_row">
                 <div class="__custom_checkbox __todo_checkbox">
                     <input type="checkbox">
-                    <svg class="__custom_checkbox_check" preserveAspectRatio="xMidYMid meet" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
+                    <svg class="__custom_checkbox_check" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
                 </div>
                 <label class="__todo_content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius at fugiat aliquid voluptatem id repudiandae provident fuga cumque, tenetur suscipit, reiciendis quibusdam perspiciatis, consectetur in.</label>
-                <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" preserveAspectRatio="xMidYMid meet" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
+                <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
             </li>
             <li class="__todo_entry __todo_row">
                 <div class="__custom_checkbox __todo_checkbox">
                     <input type="checkbox">
-                    <svg class="__custom_checkbox_check" preserveAspectRatio="xMidYMid meet" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
+                    <svg class="__custom_checkbox_check" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
                 </div>
                 <label class="__todo_content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia, quia.</label>
-                <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" preserveAspectRatio="xMidYMid meet" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
+                <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
             </li>
         </ul>
 
         <div class="__todo_new-entry __todo_row">
-            <button class="__todo_icon_btn __todo_add"><svg class="__todo_icon" preserveAspectRatio="xMidYMid meet" viewbox="0 0 16 16"><use href="src/assets/icons/plus.svg#plus">plus</use></svg></button>
+            <button class="__todo_icon_btn __todo_add"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/plus.svg#plus">plus</use></svg></button>
             <input type="text" class="__todo_add_content __todo_content" maxlength="128">
         </div>
     </section>
@@ -72,10 +76,10 @@
         <li class="__todo_entry __todo_row">
             <div class="__custom_checkbox __todo_checkbox">
                 <input type="checkbox">
-                <svg class="__custom_checkbox_check" preserveAspectRatio="xMidYMid meet" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
+                <svg class="__custom_checkbox_check" viewbox="0 0 16 16"><use href="src/assets/icons/check.svg#check">check</use></svg>
             </div>
             <label class="__todo_content"></label>
-            <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" preserveAspectRatio="xMidYMid meet" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
+            <button class="__todo_icon_btn __todo_del"><svg class="__todo_icon" viewbox="0 0 16 16"><use href="src/assets/icons/trash.svg#trash">trash</use></svg></button>
         </li>
     </template>
 

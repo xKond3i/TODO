@@ -26,8 +26,7 @@
   --gap-lg: 3rem;
   --todo-stripe-gap: .5rem;
   --todo-row-gap: 1rem;
-  --todo-btn-size: 1rem;
-  --todo-skip-stripe: calc(var(--todo-btn-size) + var(--todo-stripe-gap) + var(--todo-row-gap) * 3);
+  --todo-square-btn-size: 1rem;
   --quick: .1s;
 }
 
@@ -54,54 +53,71 @@ body {
 }
 .__todo_row {
   position: relative;
+  --margin-size: calc(var(--todo-row-gap) * 2 + var(--todo-square-btn-size));
+  display: grid;
+  grid-template-columns: [margin] var(--margin-size) [stripe] var(--todo-stripe-gap) [content] auto [trash] var(--margin-size);
 }
 .__todo_row::before {
   content: "";
   position: absolute;
   width: var(--todo-stripe-gap);
   height: 100%;
-  left: calc(var(--todo-btn-size) + var(--todo-row-gap) * 2);
+  left: calc(var(--todo-square-btn-size) + var(--todo-row-gap) * 2);
   top: 0;
   border-left: var(--stripe-border);
   border-right: var(--stripe-border);
 }
-.__todo_header {
+.__todo_row .__todo_content {
+  grid-area: content;
   padding: var(--todo-row-gap);
-  padding-left: var(--todo-skip-stripe);
+  width: 100%;
+}
+.__todo_header {
   background-color: var(--todo-header-bg);
   color: var(--todo-header-c);
-  -webkit-print-color-adjust: exact;
 }
 .__todo_entry {
   border-bottom: var(--todo-border);
 }
-.__todo_entry, .__todo_new-entry {
-  display: flex;
-  padding: var(--todo-row-gap);
-  gap: var(--todo-row-gap);
+.__todo_entry .__todo_checkbox, .__todo_new-entry .__todo_checkbox {
+  grid-area: margin;
 }
-.__todo_entry > .__todo_content, .__todo_new-entry > .__todo_content {
-  margin-left: calc(var(--todo-row-gap) + var(--todo-stripe-gap));
-  width: 100%;
+.__todo_entry .__todo_add, .__todo_new-entry .__todo_add {
+  grid-area: margin;
 }
-.__todo_entry > .__custom_checkbox, .__todo_entry > .__todo_icon_btn, .__todo_new-entry > .__custom_checkbox, .__todo_new-entry > .__todo_icon_btn {
-  width: var(--todo-btn-size);
-  height: var(--todo-btn-size);
+.__todo_entry .__todo_del, .__todo_new-entry .__todo_del {
+  grid-area: trash;
+  transition: transform var(--quick) ease-in-out, color var(--quick) ease-in-out;
+}
+.__todo_entry .__todo_checkbox,
+.__todo_entry .__todo_icon_btn, .__todo_new-entry .__todo_checkbox,
+.__todo_new-entry .__todo_icon_btn {
+  width: var(--todo-square-btn-size);
+  height: var(--todo-square-btn-size);
   flex-shrink: 0;
+  align-self: start;
+  justify-self: center;
+  margin-top: var(--todo-row-gap);
 }
-.__todo_entry > .__todo_add_content, .__todo_new-entry > .__todo_add_content {
+.__todo_entry .__todo_add_content, .__todo_new-entry .__todo_add_content {
   font-family: inherit;
   font-size: inherit;
   border: none;
   outline: none;
-  flex: 1;
+  grid-column-end: -1;
 }
-.__todo_entry.__todo_entry_done > .__todo_content, .__todo_new-entry.__todo_entry_done > .__todo_content {
+.__todo_entry.__todo_entry_done .__todo_content, .__todo_new-entry.__todo_entry_done .__todo_content {
   color: var(--color-disabled);
   text-decoration: line-through;
 }
-.__todo_entry.__todo_entry_done > .__todo_del, .__todo_new-entry.__todo_entry_done > .__todo_del {
+.__todo_entry.__todo_entry_done .__todo_del, .__todo_new-entry.__todo_entry_done .__todo_del {
   color: var(--color-disabled);
+}
+.__todo_entry .__todo_del:hover, .__todo_new-entry .__todo_del:hover {
+  color: var(--failure);
+}
+.__todo_list {
+  list-style: none;
 }
 .__todo_icon_btn {
   border: none;
@@ -116,15 +132,15 @@ body {
 .__todo_icon_btn:hover > svg {
   transform: scale(1.5);
 }
-.__todo_list {
-  list-style: none;
-}
 
 .__custom_checkbox {
   position: relative;
 }
 .__custom_checkbox:hover::before {
   transform: scale(1.25);
+}
+.__custom_checkbox:hover .__custom_checkbox_check {
+  transform: scale(1.5);
 }
 .__custom_checkbox::before {
   content: "";
@@ -136,7 +152,7 @@ body {
   border-radius: 0.1em;
   transition: transform var(--quick) ease-in-out;
 }
-.__custom_checkbox > input[type=checkbox] {
+.__custom_checkbox input[type=checkbox] {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -144,7 +160,7 @@ body {
   cursor: pointer;
   pointer-events: all;
 }
-.__custom_checkbox > input[type=checkbox]:checked + .__custom_checkbox_check {
+.__custom_checkbox input[type=checkbox]:checked + .__custom_checkbox_check {
   visibility: visible;
 }
 .__custom_checkbox_check {
@@ -153,4 +169,17 @@ body {
   pointer-events: none;
   color: var(--success);
   transform: scale(1.25);
+  transition: transform var(--quick) ease-in-out;
+}
+
+[hidden] {
+  display: none;
+}
+
+.failure {
+  color: var(--failure);
+}
+
+.success {
+  color: var(--success);
 }
