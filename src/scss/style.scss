@@ -123,6 +123,8 @@ body {
             grid-area: content;
             padding: var(--todo-row-gap);
             width: 100%;
+
+            word-break: all;
         }
     }
 

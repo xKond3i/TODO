@@ -75,6 +75,7 @@ body {
   grid-area: content;
   padding: var(--todo-row-gap);
   width: 100%;
+  word-break: all;
 }
 .__todo_header {
   background-color: var(--todo-header-bg);
