@@ -66,8 +66,11 @@
 
     --todo-square-btn-size: 1rem;
 
+    --fs-sm: 1rem;
+
     // Transitions
     --quick: .1s;
+    --slow: .5s;
 }
 
 // BODY
@@ -79,7 +82,7 @@ body {
     min-height: 100vh;
     height: auto;
 
-    font-size: var(--global-fs);
+    font-size: var(--fs-sm);
     font-family: 'Lato', sans-serif;
 
     background-color: var(--page-bg);
@@ -97,6 +100,10 @@ body {
 
         background-color: var(--todo-bg);
         border: var(--todo-border);
+
+        z-index: 0;
+
+        transition: width var(--quick) ease-in-out;
     }
 
     &_row {
@@ -122,10 +129,14 @@ body {
     &_header {
         background-color: var(--todo-header-bg);
         color: var(--todo-header-c);
+
+        z-index: 3;
     }
 
     &_entry {
         border-bottom: var(--todo-border);
+        
+        z-index: 2;
 
         // Entries marked as `done`
         &.__todo_entry_done {
@@ -164,7 +175,8 @@ body {
         }
         
         .__todo_add_content {
-            font-family: inherit;
+            font-family: monospace;
+            // font-family: inherit;
             font-size: inherit;
             border: none;
             outline: none;
@@ -175,6 +187,8 @@ body {
     }
     &_entry,
     &_new-entry {
+        background-color: var(--color-white);
+
         .__todo_checkbox,
         .__todo_icon_btn {
             width: var(--todo-square-btn-size);
@@ -288,3 +302,50 @@ body {
 
 .failure { color: var(--failure); }
 .success { color: var(--success); }
+
+// ANIMATIONS
+@keyframes shake {
+    0% { transform: translateX(-1rem); }
+    25% { transform: translateX(1rem); }
+    50% { transform: translateX(-.5rem); }
+    75% { transform: translateX(.5rem); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateY(-100%);
+        max-height: 0;
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        max-height: 100vh;
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out {
+    from {
+        max-height: 100vh;
+    }
+    to {
+        transform: translateY(-100%);
+        max-height: 0;
+        opacity: 0;
+    }
+}
+
+.invalid-shake {
+    animation: shake var(--slow);
+}
+
+.slide-in {
+    z-index: 1;
+    animation: slide-in var(--slow);
+}
+
+.slide-out {
+    z-index: 1;
+    animation: slide-out var(--slow);
+}
