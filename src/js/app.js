@@ -1,183 +1,196 @@
+// # VARIABLES AND CLASSES
 // TODO DATA
-var todos = []
+var TODOS = []
 
 // DOM ELEMENTS
-const todo_template = document.querySelector('[data-todo-template]')
+const todo_template       = document.querySelector('[data-todo-template]')
 
-const todo_container    = document.querySelector('[data-todo-container]')
-const todo_list         = todo_container.querySelector('[data-todo-list]')
-const todo_add_btn      = todo_container.querySelector('[data-todo-add-btn]')
-const todo_add_content  = todo_container.querySelector('[data-todo-add-content]')
-const todo_del_all_btn  = document.querySelector('[data-todo-delete-all-btn]')
-const todo_none_left    = todo_list.querySelector('[data-todo-info]')
+const todo_container      = document.querySelector('[data-todo-container]')
+const todo_list           = todo_container.querySelector('[data-todo-list]')
+const todo_info           = todo_list.querySelector('[data-todo-info]')
+
+const todo_add_field      = todo_container.querySelector('[data-todo-add-content]')
+const todo_add_button     = todo_container.querySelector('[data-todo-add-btn]')
+const todo_del_all_button = document.querySelector('[data-todo-delete-all-btn]')
+
+// DETAILS
+const TYPING_TEXT     = 'Type your todo here...'
+const TYPING_INTERVAL = 100
+var PAUSE_TYPING      = false
+
+// TODO CLASS
+class TODO {
+    constructor(title, done = false) {
+        this.title = title
+        this.done = done
+        this.id = TODO.genID()
+    }
+
+    static genID() {
+        let time = new Date().getTime()                   // Current timestamp
+        let rnd_key = Math.floor(Math.random() * 89 + 10) // Number range from 10 to 99
+        let id = time + rnd_key
+
+        if (TODO.findTodo(id) !== false) return TODO.genID() // Safety check if ID doesn't exists
+
+        return id
+    }
+
+    static findTodo(id) { return TODOS.find(todo => todo.id == id) || false } // Find TODO with corresponding ID
+}
 
 
 
 // # LOCAL STORAGE
-// Section responsible for handling localStorage
+// Save TODOS to localStorage
 function saveToLocalStorage() {
-    localStorage['__todos'] = JSON.stringify(todos)
+    localStorage['__todos'] = JSON.stringify(TODOS)
 }
 
+// Load TODOS from localStorage
 function loadFromLocalStorage() {
-    todos = JSON.parse(localStorage['__todos'])
-}
-
-window.onload = () => {
-    if (localStorage.hasOwnProperty('__todos')) loadFromLocalStorage()
-    saveToLocalStorage()
-
-    toggleEmptyNotification() // None left notification
-
-    // Add todos from data array
-    for (let todo of todos) {
-        addTodoElement(todo)
-    }
+    memory = JSON.parse(localStorage['__todos'])
+    for (let load of memory) { addTodo(load.title, load.done) }
 }
 
 
 
 // # ADD TODO
-// Section responsible for adding todos
-
 // Add todo DOM element
 function addTodoElement(data) {
-    // Clone TODO from the template
-    let new_todo = todo_template.content.querySelector('[data-todo-entry]').cloneNode(true)
+    let todo = todo_template.content.querySelector('[data-todo-entry]').cloneNode(true) // Clone TODO from the template
 
+    // Get component elements
+    let todo_del_btn  = todo.querySelector('[data-todo-delete-btn]')
+    let todo_checkbox = todo.querySelector('[data-todo-checkbox]')
+    let todo_title    = todo.querySelector('[data-todo-content]')
+    
+    todo.dataset.todoId = data.id                         // Assign ID
+    todo_title.textContent = data.title                   // Set title
+    todo_checkbox.checked = data.done                     // Set status
+    todo.classList.toggle('__todo_entry_done', data.done) // Set appearance
+    
     // Handle entry status through the checkbox
-    let new_todo_checkbox = new_todo.querySelector('[data-todo-checkbox]')
+    todo_checkbox.addEventListener('change', () => {
+        todo.classList.toggle('__todo_entry_done', todo_checkbox.checked) // Toggle entry appearance
+        TODO.findTodo(todo.dataset.todoId).done = todo_checkbox.checked               // Sync element with TODOS array
 
-    new_todo_checkbox.checked = data.done
-    new_todo.classList.toggle('__todo_entry_done', data.done)
-
-    new_todo_checkbox.addEventListener('change', () => {
-        new_todo.classList.toggle('__todo_entry_done', new_todo_checkbox.checked)
-        let todo_entry_elements = [...todo_list.querySelectorAll('[data-todo-entry]')]
-        todos[todo_entry_elements.indexOf(new_todo)].done = new_todo_checkbox.checked
-
-        // Update localStorage
-        saveToLocalStorage()
+        saveToLocalStorage() // Update localStorage
     })
 
-    new_todo.addEventListener('animationend', () => {
-        new_todo.classList.remove('slide-in')
-    }, {once: true})
+    todo_del_btn.addEventListener('click', () => deleteTodo(todo.dataset.todoId)) // Handle delete button of an entry
 
-    // Handle deletion of todo element
-    let new_todo_del_btn = new_todo.querySelector('[data-todo-delete-btn]')
-    new_todo_del_btn.addEventListener('click', () => deleteTodo(new_todo))
+    addAnimation('slide-in', todo) // Add animation
 
-    new_todo.querySelector('[data-todo-content]').textContent = data.title
-
-    // Finally add prepared todo to the list
-    todo_list.appendChild(new_todo)
-    return new_todo
+    todo_list.appendChild(todo) // Finally add prepared todo to the list
 }
 
-// Add todo
+// Add todo DOM element
 function addTodo(title, done = false) {
-    // Prepare todo structure
-    let new_todo = {
-        title: title,
-        done: done
-    }
+    let todo = new TODO(title, done) // Create todo object from a class
 
-    todos.push(new_todo) // Add todo to the data array
-    todo_elem = addTodoElement(new_todo) // Add todo as a DOM element
+    TODOS.push(todo)     // Add todo to the data array
+    addTodoElement(todo) // Add todo element
 
-    // Update localStorage
-    saveToLocalStorage()
+    saveToLocalStorage() // Save to localStorage
 
-    toggleEmptyNotification() // None left notification
+    handleEmptyNotification() // Empty Notification
 }
 
-// Handle new entry input
+// Handle add field validation
 function validTodo() {
-    // Todo has to have a title
-    if (todo_add_content.value.length == 0) {
-        todo_container.classList.add('invalid-shake')
-        todo_container.addEventListener('animationend', () => {
-            todo_container.classList.remove('invalid-shake')
-        }, {once: true})
-        return false
-    }
-    return true
+    if (todo_add_field.value.length > 0) return true // Valid
+
+    addAnimation('invalid-shake', todo_container)
+    return false
 }
 
+// Handle adding todos through form
 function addTodoThroughForm() {
-    if (validTodo()) {
-        addTodo(todo_add_content.value)
-        todo_add_content.value = ''
-    }
+    if (validTodo() === false) return // Field invalid
+
+    addTodo(todo_add_field.value)
+    todo_add_field.value = ''
 }
 
-todo_add_btn.addEventListener('click', addTodoThroughForm)
-todo_add_content.addEventListener('keypress', (e) => { if (e.key == 'Enter') addTodoThroughForm() })
 
 
-
-// # DELETE TODO
-// Section responsible for removing todos
-
+// # DELETE
 // Delete single todo both from array and as an element
-function deleteTodo(todo_element) {
+function deleteTodo(id) {
+    let todo_elements = [...document.querySelectorAll('[data-todo-id]')]
+    let todo_element = todo_elements.find(element => element.dataset.todoId == id)
+
     // Slide out animation
     todo_element.classList.add('slide-out')
     todo_element.addEventListener('animationend', () => {
-        let todo_entry_elements = [...todo_list.querySelectorAll('[data-todo-entry]')]
-        todos.splice(todo_entry_elements.indexOf(todo_element), 1)
-        todo_list.removeChild(todo_element)
+        TODOS = TODOS.filter(todo => todo.id != id) // Remove from the array
+        todo_list.removeChild(todo_element)         // Remove as DOM element
 
-        // Update localStorage
-        saveToLocalStorage()
+        saveToLocalStorage() // Update localStorage
 
-        toggleEmptyNotification() // None left notification
-        updateAddContentInput() // Increasing paper size on input effect
+        handleEmptyNotification() // None left notification
+        updateAddField()          // Increasing field effect
     }, {once: true})
 }
 
 // Delete all todos both from array and as an element
 function deleteAllTodos() {
-    let todo_entry_elements = [...todo_list.querySelectorAll('[data-todo-entry]')]
-    for (let todo_entry_element of todo_entry_elements) {
-        deleteTodo(todo_entry_element)
+    for (let todo of TODOS) {
+        deleteTodo(todo.id)
     }
 }
 
-// Handle deletion of all todos throuogh the button
-todo_del_all_btn.addEventListener('click', deleteAllTodos)
 
-// # EMPTY
-function toggleEmptyNotification() {
-    if (todos.length === 0) return todo_none_left.removeAttribute('hidden')
-    return todo_none_left.setAttribute('hidden', true)
+
+// # DETAILS
+// End animation properly
+function addAnimation(name, element) {
+    element.classList.add(name)
+    element.addEventListener('animationend', () => { element.classList.remove(name) }, {once: true})
 }
 
-
-
-// DETAILS
-const todo_add_content_input = document.querySelector('.__todo_add_content')
-
-var placeholder_txt = 'Type your todo here...'
-var letter_interval = 50
-var pause_typing_anim = false
-
-// Setup input font size to work with typing effect
-todo_add_content_input.setAttribute('size', placeholder_txt.length)
-
-// Increasing paper size on input effect
-const updateAddContentInput = () => { 
-    let len = todo_add_content_input.value.length
-    pause_typing_anim = len > 0
-    todo_add_content_input.setAttribute('size', len > placeholder_txt.length ? len - 1 : placeholder_txt.length)
+// Handle none todos left notification
+function handleEmptyNotification() {
+    if (TODOS.length === 0) return todo_info.removeAttribute('hidden')
+    return todo_info.setAttribute('hidden', true)
 }
-todo_add_content_input.addEventListener('input', updateAddContentInput)
+
+// Update add field size and handle typing pause
+const updateAddField = () => {
+    let current_length = todo_add_field.value.length
+    PAUSE_TYPING = current_length > 0                               // Pause the animation if there already something typed
+    todo_add_field.size = (current_length > TYPING_TEXT.length ?    // Update size
+                           current_length - 1 : TYPING_TEXT.length)
+}
 
 // Typing text effect
-const addContentInputPlaceholderAnimation = setInterval( () => {
-    todo_add_content_input.placeholder = ''
-    for (let i = 0; i < placeholder_txt.length; i++) {
-        if (!pause_typing_anim) setTimeout(() => { todo_add_content_input.placeholder += placeholder_txt.charAt(i)}, i * letter_interval)
-    }
-}, placeholder_txt.length * letter_interval + 1000)
+const addFieldTyping = setInterval(() => {
+        if (PAUSE_TYPING) return // PAUSE guard case
+
+        let i = todo_add_field.placeholder.length                    // Get current letter index
+        if (i >= TYPING_TEXT.length) todo_add_field.placeholder = '' // Clear placeholder, when index indicates last letter
+
+        todo_add_field.placeholder += TYPING_TEXT.charAt(i)
+    }, TYPING_INTERVAL
+)
+
+
+
+// START EVERYTHING ON DOM LOAD
+window.onload = () => {
+    if (localStorage.hasOwnProperty('__todos')) loadFromLocalStorage()
+    
+    handleEmptyNotification()
+    
+    // Details
+    todo_add_field.setAttribute('size', TYPING_TEXT.length)
+    todo_add_field.addEventListener('input', updateAddField)
+
+    // Handle adding todo through the form
+    todo_add_button.addEventListener('click', addTodoThroughForm)                                      // Submit on button click
+    todo_add_field.addEventListener('keypress', (e) => { if (e.key == 'Enter') addTodoThroughForm() }) // Submit on `Enter`
+
+    // Handle deletion of all todos throuogh the button
+    todo_del_all_button.addEventListener('click', deleteAllTodos)
+}
