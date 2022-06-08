@@ -24,6 +24,7 @@ class TODO {
         this.title = title
         this.done = done
         this.id = TODO.genID()
+        this.order = TODOS.length
     }
 
     static genID() {
@@ -50,6 +51,7 @@ function saveToLocalStorage() {
 // Load TODOS from localStorage
 function loadFromLocalStorage() {
     memory = JSON.parse(localStorage['__todos'])
+    memory.sort((current, next) => current.order - next.order)
     for (let load of memory) { addTodo(load.title, load.done) }
 }
 
@@ -151,6 +153,45 @@ function deleteAllTodos() {
 
 
 
+// # DRAG AND DROP
+// Container's dragging logic
+function handleDragging(e) {
+    e.preventDefault()
+    const draggable = document.querySelector('.dragging')
+    const after_element = getEntryAfterDragging(e.clientY)
+
+    if (after_element === null) todo_list.appendChild(draggable) // There's no element below, append at the end
+    else todo_list.insertBefore(draggable, after_element)        // There's an element below, append before it
+
+    updateOrder() // Update order of TODOS
+}
+
+// Get element after dragging entry
+function getEntryAfterDragging(y) {
+    const draggables = [...todo_list.querySelectorAll('[data-todo-entry]:not(.dragging)')]
+
+    return draggables.reduce((closest, child) => {
+        const box = child.getBoundingClientRect()
+        const offset = y - box.top - box.height / 2 // Offset mouse position to center of the box
+
+        if (offset < 0 && offset > closest.offset) return { offset: offset, element: child } // Lesser offset (-INFINITY to 0)
+        return closest                                                                       // Bigger offest, pass previous
+    }, { offset: Number.NEGATIVE_INFINITY }).element
+}
+
+// Update order
+function updateOrder() {
+    const todo_entries = [...todo_list.querySelectorAll('[data-todo-entry]')]
+    
+    for (let [index, entry] of todo_entries.entries()) {
+        TODO.findTodo(entry.dataset.todoId).order = index
+    }
+
+    saveToLocalStorage() // Save the order
+}
+
+
+
 // # DETAILS
 // End animation properly
 function addAnimation(name, element) {
@@ -182,29 +223,6 @@ const addFieldTyping = setInterval(() => {
         todo_add_field.placeholder += TYPING_TEXT.charAt(i)
     }, TYPING_INTERVAL
 )
-
-
-
-// # DRAG AND DROP
-// Container's dragging logic
-function handleDragging(e) {
-    e.preventDefault()
-    const draggable = document.querySelector('.dragging')
-    const after_element = getEntryAfterDragging(e.clientY)
-    if (after_element === null) todo_list.appendChild(draggable)
-    else todo_list.insertBefore(draggable, after_element)
-}
-
-function getEntryAfterDragging(y) {
-    const draggables = [...todo_list.querySelectorAll('[data-todo-entry]:not(.dragging)')]
-
-    return draggables.reduce((closest, child) => {
-        const box = child.getBoundingClientRect()
-        const offset = y - box.top - box.height / 2
-        if (offset < 0 && offset > closest.offset) return { offset: offset, element: child }
-        return closest
-    }, { offset: Number.NEGATIVE_INFINITY }).element
-}
 
 
 
