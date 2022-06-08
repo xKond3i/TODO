@@ -351,3 +351,7 @@ body {
     z-index: 1;
     animation: slide-out var(--slow);
 }
+
+.dragging {
+    opacity: .5;
+}

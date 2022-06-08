@@ -310,3 +310,7 @@ body {
   -webkit-animation: slide-out var(--slow);
           animation: slide-out var(--slow);
 }
+
+.dragging {
+  opacity: 0.5;
+}

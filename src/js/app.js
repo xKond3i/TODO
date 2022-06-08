@@ -78,6 +78,10 @@ function addTodoElement(data) {
         saveToLocalStorage() // Update localStorage
     })
 
+    // Handle dragging
+    todo.addEventListener('dragstart', () => { todo.classList.add('dragging') })  // Select dragging element (by applying class)
+    todo.addEventListener('dragend', () => { todo.classList.remove('dragging') }) // Deselect dragging element
+    
     todo_del_btn.addEventListener('click', () => deleteTodo(todo.dataset.todoId)) // Handle delete button of an entry
 
     addAnimation('slide-in', todo) // Add animation
@@ -94,7 +98,8 @@ function addTodo(title, done = false) {
 
     saveToLocalStorage() // Save to localStorage
 
-    handleEmptyNotification() // Empty Notification
+    handleEmptyNotification() // None left notification
+    updateAddField()          // Increasing field effect
 }
 
 // Handle add field validation
@@ -111,6 +116,9 @@ function addTodoThroughForm() {
 
     addTodo(todo_add_field.value)
     todo_add_field.value = ''
+
+    handleEmptyNotification() // None left notification
+    updateAddField()          // Increasing field effect
 }
 
 
@@ -118,7 +126,7 @@ function addTodoThroughForm() {
 // # DELETE
 // Delete single todo both from array and as an element
 function deleteTodo(id) {
-    let todo_elements = [...document.querySelectorAll('[data-todo-id]')]
+    let todo_elements = [...document.querySelectorAll('[data-todo-entry]')]
     let todo_element = todo_elements.find(element => element.dataset.todoId == id)
 
     // Slide out animation
@@ -131,7 +139,7 @@ function deleteTodo(id) {
 
         handleEmptyNotification() // None left notification
         updateAddField()          // Increasing field effect
-    }, {once: true})
+    }, { once: true })
 }
 
 // Delete all todos both from array and as an element
@@ -177,6 +185,29 @@ const addFieldTyping = setInterval(() => {
 
 
 
+// # DRAG AND DROP
+// Container's dragging logic
+function handleDragging(e) {
+    e.preventDefault()
+    const draggable = document.querySelector('.dragging')
+    const after_element = getEntryAfterDragging(e.clientY)
+    if (after_element === null) todo_list.appendChild(draggable)
+    else todo_list.insertBefore(draggable, after_element)
+}
+
+function getEntryAfterDragging(y) {
+    const draggables = [...todo_list.querySelectorAll('[data-todo-entry]:not(.dragging)')]
+
+    return draggables.reduce((closest, child) => {
+        const box = child.getBoundingClientRect()
+        const offset = y - box.top - box.height / 2
+        if (offset < 0 && offset > closest.offset) return { offset: offset, element: child }
+        return closest
+    }, { offset: Number.NEGATIVE_INFINITY }).element
+}
+
+
+
 // START EVERYTHING ON DOM LOAD
 window.onload = () => {
     if (localStorage.hasOwnProperty('__todos')) loadFromLocalStorage()
@@ -189,8 +220,11 @@ window.onload = () => {
 
     // Handle adding todo through the form
     todo_add_button.addEventListener('click', addTodoThroughForm)                                      // Submit on button click
-    todo_add_field.addEventListener('keypress', (e) => { if (e.key == 'Enter') addTodoThroughForm() }) // Submit on `Enter`
+    todo_add_field.addEventListener('keypress', e => { if (e.key == 'Enter') addTodoThroughForm() }) // Submit on `Enter`
 
     // Handle deletion of all todos throuogh the button
     todo_del_all_button.addEventListener('click', deleteAllTodos)
+
+    // Handle dragging logic
+    todo_container.addEventListener('dragover', e => handleDragging(e))
 }
